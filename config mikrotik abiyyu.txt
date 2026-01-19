@@ -1,0 +1,28 @@
+🔧 Asumsi
+
+ether1 = Internet (WAN)
+
+ether2 = LAN
+
+Internet dari ISP DHCP (kabel langsung)
+
+1️⃣ IP Address LAN
+/ip address add address=192.168.1.1/24 interface=ether2
+
+2️⃣ DHCP Server (Client otomatis dapat IP)
+/ip pool add name=pool-lan ranges=192.168.1.10-192.168.1.254
+/ip dhcp-server add name=dhcp-lan interface=ether2 address-pool=pool-lan disabled=no
+/ip dhcp-server network add address=192.168.1.0/24 gateway=192.168.1.1 dns-server=8.8.8.8
+
+3️⃣ Internet dari ISP (DHCP Client)
+/ip dhcp-client add interface=ether1 disabled=no
+
+4️⃣ NAT (Agar LAN Bisa Internet)
+/ip firewall nat add chain=srcnat out-interface=ether1 action=masquerade
+
+5️⃣ DNS
+/ip dns set servers=8.8.8.8,1.1.1.1 allow-remote-requests=yes
+
+
+✅ Selesai
+Colokkan PC ke ether2, otomatis dapat IP & internet.
